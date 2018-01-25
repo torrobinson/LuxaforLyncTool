@@ -61,7 +61,7 @@ namespace LuxaforLyncTool_Client
         {
             chatClient.BindNewConversationMessage((object sender, MessageSentEventArgs args) =>
             {
-                var foo = "bar";
+                NotofyOfChat();
             });
         }
 
@@ -69,7 +69,7 @@ namespace LuxaforLyncTool_Client
         {
             chatClient.BindNewConversation((object sender, ConversationManagerEventArgs args) =>
             {
-                var foo = "bar";
+                NotofyOfChat();
             });
         }
 
@@ -118,6 +118,11 @@ namespace LuxaforLyncTool_Client
                     }
                 }
             });
+        }
+
+        private void NotofyOfChat()
+        {
+            lightClient.PulseColor(SimpleColors.Blue);
         }
 
         public void Dispose()

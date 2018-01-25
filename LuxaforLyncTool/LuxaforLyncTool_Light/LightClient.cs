@@ -75,11 +75,17 @@ namespace LuxaforLyncTool_Light
         {
             SendByte((byte)simpleColorCode);
         }
-        public static void SendColor(string hex)
+        public void SendColor(string hex)
         {
             int argb = Int32.Parse(hex.Replace("#", ""), NumberStyles.HexNumber);
             throw new NotImplementedException();
         }
+
+        public void PulseColor(char simpleColorCode)
+        {
+            // TODO: actually flash and return to previous color
+        }
+
         #endregion
 
         #endregion
