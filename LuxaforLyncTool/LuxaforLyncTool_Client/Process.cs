@@ -10,12 +10,16 @@ using LuxaforLyncTool_Light;
 using LuxaforLyncTool_Light.Color;
 using LuxaforLyncTool_Lync;
 using Microsoft.Lync.Model;
+using Microsoft.Lync.Model.Conversation;
 
 namespace LuxaforLyncTool_Client
 {
     public class Process : IDisposable
     {
         NotifyIcon _notifyIcon;
+
+        private LightClient lightClient;
+        private ChatClient chatClient;
 
         public Process()
         {
@@ -43,10 +47,34 @@ namespace LuxaforLyncTool_Client
         public void Listen()
         {
            // Create a new light client and connect
-           LightClient lightClient = new LightClient();
+           lightClient = new LightClient();
 
            // Create a new chat client
-           ChatClient chatClient = new ChatClient();
+           chatClient = new ChatClient();
+
+            BindStatusChanges();
+            BindNewConversation();
+            BindNewConversationMessage();
+        }
+
+        private void BindNewConversationMessage()
+        {
+            chatClient.BindNewConversationMessage((object sender, MessageSentEventArgs args) =>
+            {
+                var foo = "bar";
+            });
+        }
+
+        private void BindNewConversation()
+        {
+            chatClient.BindNewConversation((object sender, ConversationManagerEventArgs args) =>
+            {
+                var foo = "bar";
+            });
+        }
+
+        private void BindStatusChanges()
+        {
             // Bind what happens when status updates
             chatClient.BindStatusUpdate((object sender, ContactInformationChangedEventArgs args) =>
             {
