@@ -17,12 +17,14 @@ namespace LuxaforLyncTool_Client
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            // Rather than actually running a WinForms app,
             using (Process clientProcess = new Process())
             {
+                // Start just run a process which displays an icon in the tray,
                 clientProcess.Display();
+                // ... and listens for Lync events we care about
                 clientProcess.Listen();
 
-                // Make sure the application runs!
                 Application.Run();
             }
         }

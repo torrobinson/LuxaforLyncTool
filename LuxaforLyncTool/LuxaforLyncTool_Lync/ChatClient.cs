@@ -55,5 +55,10 @@ namespace LuxaforLyncTool_Lync
         {
             newMessageHandler = handler;
         }
+
+        public ContactAvailability? GetAvailability()
+        {
+            return (ContactAvailability)_lyncClient.Self.Contact.GetContactInformation(ContactInformationType.Availability);
+        }
     }
 }
