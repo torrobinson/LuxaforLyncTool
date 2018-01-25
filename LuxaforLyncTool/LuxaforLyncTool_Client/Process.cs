@@ -39,10 +39,10 @@ namespace LuxaforLyncTool_Client
             // Exit
             var exitOption = new ToolStripMenuItem { Text = Strings.Exit };
             exitOption.Click += (sender, args) => { Application.Exit(); };
-            _notifyIcon.ContextMenuStrip.Items.Add(exitOption);
+            
 
             // Brightness
-            brightnessMenu = new ToolStripMenuItem { Text = "Brightness"};
+            brightnessMenu = new ToolStripMenuItem { Text = Strings.Brightness};
             ToolStripMenuItem quarterBrightnessItem = new ToolStripMenuItem { Text = "25%", Tag = 0.25, CheckOnClick = true };
             ToolStripMenuItem helfBrightnessItem = new ToolStripMenuItem { Text = "50%", Tag = 0.50, CheckOnClick = true };
             ToolStripMenuItem threeQuarterBrightnessItem = new ToolStripMenuItem { Text = "75%", Tag = 0.75, CheckOnClick = true };
@@ -77,7 +77,16 @@ namespace LuxaforLyncTool_Client
                 ApplyCurrentStatus();
             };
 
+            ToolStripMenuItem aboutItem = new ToolStripMenuItem() {Text = Strings.About};
+            aboutItem.Click += (sender, args) =>
+            {
+                About about = new About();
+                about.Show();
+            };
+
             _notifyIcon.ContextMenuStrip.Items.Add(brightnessMenu);
+            _notifyIcon.ContextMenuStrip.Items.Add(aboutItem);
+            _notifyIcon.ContextMenuStrip.Items.Add(exitOption);
         }
 
         public void CheckCurrentBrightnessItem()
