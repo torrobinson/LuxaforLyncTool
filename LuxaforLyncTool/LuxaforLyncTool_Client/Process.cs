@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using LuxaforLyncTool_Client.Properties;
 using LuxaforLyncTool_Light;
 using LuxaforLyncTool_Light.Color;
 using LuxaforLyncTool_Lync;
 using Microsoft.Lync.Model;
+using Microsoft.Lync.Model.Conversation;
 
 namespace LuxaforLyncTool_Client
 {
@@ -12,8 +14,8 @@ namespace LuxaforLyncTool_Client
     {
         private readonly NotifyIcon _notifyIcon;
 
-        private LightClient lightClient;
-        private ChatClient chatClient;
+        private LightClient _lightClient;
+        private ChatClient _chatClient;
 
         public Process()
         {
@@ -37,30 +39,35 @@ namespace LuxaforLyncTool_Client
         public void Listen()
         {
             // Create a new light client and connect
-            lightClient = new LightClient();
+            _lightClient = new LightClient();
 
             // Create a new chat client
-            chatClient = new ChatClient();
-
-            ApplyCurrentStatus();
-            ApplyCurrentConversations();
+            _chatClient = new ChatClient();
 
             // Bind to new changes
             BindStatusChanges();
             BindNewConversation();
             BindNewConversationMessage();
+
+            // And apply to current states
+            ApplyCurrentStatus();
+            ApplyCurrentConversations();
         }
 
         private void ApplyCurrentConversations()
         {
             // Try find any current conversations and bind to new messages for them
-            // TODO: Implement
+            List<Conversation> currentConversations = _chatClient.GetCurrentConversations();
+            foreach (Conversation conversation in currentConversations)
+            {
+                _chatClient.BindHandlerToConversationIMs(conversation);
+            }
         }
 
         private void ApplyCurrentStatus()
         {
             // Try fetch the current user availability and set the light to it
-            ContactAvailability? availability = chatClient.GetAvailability();
+            ContactAvailability? availability = _chatClient.GetAvailability();
             if (availability != null)
             {
                 SendLightBasedOnAvailability(availability ?? ContactAvailability.Free);
@@ -69,18 +76,18 @@ namespace LuxaforLyncTool_Client
 
         private void BindNewConversationMessage()
         {
-            chatClient.BindNewConversationMessage((sender, args) => { NotifyOfChat(); });
+            _chatClient.BindNewConversationMessage((sender, args) => { NotifyOfChat(); });
         }
 
         private void BindNewConversation()
         {
-            chatClient.BindNewConversation((sender, args) => { NotifyOfChat(); });
+            _chatClient.BindNewConversation((sender, args) => { NotifyOfChat(); });
         }
 
         private void BindStatusChanges()
         {
             // Bind what happens when status updates
-            chatClient.BindStatusUpdate((sender, args) =>
+            _chatClient.BindStatusUpdate((sender, args) =>
             {
                 var me = sender as Contact;
                 // If this was an availability update,
@@ -100,28 +107,28 @@ namespace LuxaforLyncTool_Client
             switch (availability)
             {
                 case ContactAvailability.Away:
-                    lightClient.SendColor(SimpleColors.Yellow);
+                    _lightClient.SendColor(SimpleColors.Yellow);
                     break;
                 case ContactAvailability.Busy:
-                    lightClient.SendColor(SimpleColors.Red);
+                    _lightClient.SendColor(SimpleColors.Red);
                     break;
                 case ContactAvailability.BusyIdle:
-                    lightClient.SendColor(SimpleColors.Red);
+                    _lightClient.SendColor(SimpleColors.Red);
                     break;
                 case ContactAvailability.DoNotDisturb:
-                    lightClient.SendColor(SimpleColors.Red);
+                    _lightClient.SendColor(SimpleColors.Red);
                     break;
                 case ContactAvailability.Free:
-                    lightClient.SendColor(SimpleColors.Green);
+                    _lightClient.SendColor(SimpleColors.Green);
                     break;
                 case ContactAvailability.FreeIdle:
-                    lightClient.SendColor(SimpleColors.Green);
+                    _lightClient.SendColor(SimpleColors.Green);
                     break;
                 case ContactAvailability.Offline:
-                    lightClient.SendColor(SimpleColors.Off);
+                    _lightClient.SendColor(SimpleColors.Off);
                     break;
                 case ContactAvailability.TemporarilyAway:
-                    lightClient.SendColor(SimpleColors.Yellow);
+                    _lightClient.SendColor(SimpleColors.Yellow);
                     break;
                 default:
                     break;
@@ -130,7 +137,7 @@ namespace LuxaforLyncTool_Client
 
         private void NotifyOfChat()
         {
-            lightClient.PulseColor(SimpleColors.Blue);
+            _lightClient.PulseColor(SimpleColors.Blue);
         }
 
         public void Dispose()

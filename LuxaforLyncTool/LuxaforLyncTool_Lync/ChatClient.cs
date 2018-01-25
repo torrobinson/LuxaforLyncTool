@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Lync.Internal.Utilities.Helpers;
 using Microsoft.Lync.Model;
 using Microsoft.Lync.Model.Conversation;
@@ -21,18 +23,34 @@ namespace LuxaforLyncTool_Lync
             // When a new convo starts
             _lyncClient.ConversationManager.ConversationAdded += (object sender, ConversationManagerEventArgs args) =>
             {
-                // When a person joins
-                args.Conversation.ParticipantAdded += (object sender2, ParticipantCollectionChangedEventArgs args2) =>
-                {
-                    // That's not me
-                    if (args2.Participant.Contact.Uri != _lyncClient.Self.Contact.Uri)
-                    {
-                        // When they send a message
-                        InstantMessageModality instantMessageModality = args2.Participant.Modalities[ModalityTypes.InstantMessage] as InstantMessageModality;
-                        instantMessageModality.InstantMessageReceived += newMessageHandler;
-                    }
-                };
+                BindHandlerToConversationIMs(args.Conversation);
             };
+        }
+
+        private void BindNewMessageHandlerToOtherParticipant(Participant participant)
+        {
+            // That's not me
+            if (participant.Contact.Uri != _lyncClient.Self.Contact.Uri)
+            {
+                // When they send a message
+                InstantMessageModality instantMessageModality = participant.Modalities[ModalityTypes.InstantMessage] as InstantMessageModality;
+                instantMessageModality.InstantMessageReceived += newMessageHandler;
+            }
+        }
+
+        public void BindHandlerToConversationIMs(Conversation conversation)
+        {
+            // When a person joins, do it
+            conversation.ParticipantAdded += (object sender, ParticipantCollectionChangedEventArgs args) =>
+            {
+                BindNewMessageHandlerToOtherParticipant(args.Participant);
+            };
+            
+            // And bind to existing participants
+            foreach (Participant participant in conversation.Participants)
+            {
+                BindNewMessageHandlerToOtherParticipant(participant);
+            }
         }
 
         public void BindStatusUpdate(EventHandler<ContactInformationChangedEventArgs> handler)
@@ -59,6 +77,11 @@ namespace LuxaforLyncTool_Lync
         public ContactAvailability? GetAvailability()
         {
             return (ContactAvailability)_lyncClient.Self.Contact.GetContactInformation(ContactInformationType.Availability);
+        }
+
+        public List<Conversation> GetCurrentConversations()
+        {
+            return _lyncClient.ConversationManager.Conversations.ToList();
         }
     }
 }
