@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Globalization;
 using LuxaforLyncTool_Light.Device;
 using UsbHid;
 using UsbHid.USB.Classes.Messaging;
@@ -70,12 +71,13 @@ namespace LuxaforLyncTool_Light
         #endregion
 
         #region Color Commands
-        private void SendColor(char simpleColorCode)
+        public void SendColor(char simpleColorCode)
         {
             SendByte((byte)simpleColorCode);
         }
-        private static void SendColor(System.Drawing.Color color)
+        public static void SendColor(string hex)
         {
+            int argb = Int32.Parse(hex.Replace("#", ""), NumberStyles.HexNumber);
             throw new NotImplementedException();
         }
         #endregion

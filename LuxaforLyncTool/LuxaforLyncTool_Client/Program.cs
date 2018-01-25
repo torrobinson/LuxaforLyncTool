@@ -16,7 +16,15 @@ namespace LuxaforLyncTool_Client
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            using (Process clientProcess = new Process())
+            {
+                clientProcess.Display();
+                clientProcess.Listen();
+
+                // Make sure the application runs!
+                Application.Run();
+            }
         }
     }
 }
