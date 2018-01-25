@@ -21,6 +21,8 @@ namespace LuxaforLyncTool_Client
         private LightClient _lightClient;
         private ChatClient _chatClient;
 
+        private ToolStripMenuItem brightnessMenu;
+
         public Process()
         {
             _notifyIcon = new NotifyIcon();
@@ -34,13 +36,62 @@ namespace LuxaforLyncTool_Client
 
             _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
 
+            // Exit
             var exitOption = new ToolStripMenuItem { Text = Strings.Exit };
             exitOption.Click += (sender, args) => { Application.Exit(); };
             _notifyIcon.ContextMenuStrip.Items.Add(exitOption);
 
-            var strobeTest = new ToolStripMenuItem { Text = "Strobe" };
-            strobeTest.Click += (sender, args) => { _lightClient.SendPulseColor(Color.Red, Speed.Fast, 5, LEDs.Back); };
-            _notifyIcon.ContextMenuStrip.Items.Add(strobeTest);
+            // Brightness
+            brightnessMenu = new ToolStripMenuItem { Text = "Brightness"};
+            ToolStripMenuItem quarterBrightnessItem = new ToolStripMenuItem { Text = "25%", Tag = 0.25, CheckOnClick = true };
+            ToolStripMenuItem helfBrightnessItem = new ToolStripMenuItem { Text = "50%", Tag = 0.50, CheckOnClick = true };
+            ToolStripMenuItem threeQuarterBrightnessItem = new ToolStripMenuItem { Text = "75%", Tag = 0.75, CheckOnClick = true };
+            ToolStripMenuItem maxBrightnessItem = new ToolStripMenuItem { Text = "100%", Tag = 1.0, CheckOnClick = true };
+            brightnessMenu.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                maxBrightnessItem, threeQuarterBrightnessItem,helfBrightnessItem, quarterBrightnessItem
+            });
+
+            quarterBrightnessItem.Click += (sender, args) =>
+            {
+                _lightClient.Brightness = 0.25;
+                CheckCurrentBrightnessItem();
+                ApplyCurrentStatus();
+            };
+            helfBrightnessItem.Click += (sender, args) =>
+            {
+                _lightClient.Brightness = 0.5;
+                CheckCurrentBrightnessItem();
+                ApplyCurrentStatus();
+            };
+            threeQuarterBrightnessItem.Click += (sender, args) =>
+            {
+                _lightClient.Brightness = 0.75;
+                CheckCurrentBrightnessItem();
+                ApplyCurrentStatus();
+            };
+            maxBrightnessItem.Click += (sender, args) =>
+            {
+                _lightClient.Brightness = 1.0;
+                CheckCurrentBrightnessItem();
+                ApplyCurrentStatus();
+            };
+
+            _notifyIcon.ContextMenuStrip.Items.Add(brightnessMenu);
+        }
+
+        public void CheckCurrentBrightnessItem()
+        {
+            if (_lightClient != null)
+            {
+                foreach (ToolStripMenuItem subItem in brightnessMenu.DropDownItems)
+                {
+                    if (subItem.Tag != null && subItem.Tag is double)
+                    {
+                        subItem.Checked = ((double)subItem.Tag) == _lightClient.Brightness;
+                    }
+                }
+            }
         }
 
         public void Listen()
@@ -60,6 +111,8 @@ namespace LuxaforLyncTool_Client
             // And apply to current states
             ApplyCurrentStatus();
             ApplyCurrentConversations();
+
+            CheckCurrentBrightnessItem();
         }
 
         private void BindComputerLocked()

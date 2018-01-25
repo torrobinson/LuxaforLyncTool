@@ -19,6 +19,9 @@ namespace LuxaforLyncTool_Light
         // Our paired device
         public static UsbHidDevice Device;
 
+        // Out brightness setting
+        public double Brightness = 1.0;
+
         public LightClient()
         {
             // Instantiate new device
@@ -82,7 +85,7 @@ namespace LuxaforLyncTool_Light
 
         public void SendPulseColor(System.Drawing.Color color, byte speed, byte pulseCount, byte leds = 0xFF)
         {
-            byte[] colorBytes = ColorHelpers.ColorToBytes(color);
+            byte[] colorBytes = ColorHelpers.ColorToBytes(color, this.Brightness);
             // TODO: actually flash and return to previous color
             SendBytes(LightCommands.Strobe, new byte[]
             {
@@ -98,7 +101,7 @@ namespace LuxaforLyncTool_Light
 
         public void SendComplexColor(System.Drawing.Color color, byte led = 0xFF)
         {
-            byte[] colorBytes = ColorHelpers.ColorToBytes(color);
+            byte[] colorBytes = ColorHelpers.ColorToBytes(color, this.Brightness);
             // TODO: actually flash and return to previous color
             SendBytes(LightCommands.ComplexColor, new byte[]
             {
