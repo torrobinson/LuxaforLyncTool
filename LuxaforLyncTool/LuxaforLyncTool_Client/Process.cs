@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using LuxaforLyncTool_Client.Properties;
+using LuxaforLyncTool_Client.Resources;
 using LuxaforLyncTool_Light;
 using LuxaforLyncTool_Light.Color;
+using LuxaforLyncTool_Light.Device;
 using LuxaforLyncTool_Lync;
 using Microsoft.Lync.Model;
 using Microsoft.Lync.Model.Conversation;
+using Microsoft.Win32;
 
 namespace LuxaforLyncTool_Client
 {
@@ -22,18 +26,21 @@ namespace LuxaforLyncTool_Client
             _notifyIcon = new NotifyIcon();
         }
 
-        public void Display()
+        public void DisplayIcon()
         {
-            _notifyIcon.Text = "Test text";
-            _notifyIcon.Icon = Resources.tray_icon;
+            _notifyIcon.Text = Strings.ApplicationName;
+            _notifyIcon.Icon = Images.TrayIcon;
             _notifyIcon.Visible = true;
 
             _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
 
-            var testItem = new ToolStripMenuItem {Text = "Test!"};
-            testItem.Click += (sender, args) => { MessageBox.Show("Test!", "Test caption", MessageBoxButtons.OK); };
+            var exitOption = new ToolStripMenuItem { Text = Strings.Exit };
+            exitOption.Click += (sender, args) => { Application.Exit(); };
+            _notifyIcon.ContextMenuStrip.Items.Add(exitOption);
 
-            _notifyIcon.ContextMenuStrip.Items.Add(testItem);
+            var strobeTest = new ToolStripMenuItem { Text = "Strobe" };
+            strobeTest.Click += (sender, args) => { _lightClient.SendPulseColor(Color.Red, Speed.Fast, 5); };
+            _notifyIcon.ContextMenuStrip.Items.Add(strobeTest);
         }
 
         public void Listen()
@@ -48,10 +55,33 @@ namespace LuxaforLyncTool_Client
             BindStatusChanges();
             BindNewConversation();
             BindNewConversationMessage();
+            BindComputerLocked();
 
             // And apply to current states
             ApplyCurrentStatus();
             ApplyCurrentConversations();
+        }
+
+        private void BindComputerLocked()
+        {
+            // On computer session change
+            Microsoft.Win32.SystemEvents.SessionSwitch += (sender, args) =>
+            {
+                if (args.Reason == SessionSwitchReason.SessionLock)
+                {
+                    // Computer was locked
+                    SendLightBasedOnAvailability(ContactAvailability.Busy);
+                }
+                else if (args.Reason == SessionSwitchReason.SessionUnlock)
+                {
+                    // Computer was unlocked. Change light to natural state
+                    ApplyCurrentStatus();
+                }
+                else if (args.Reason == SessionSwitchReason.SessionLogoff)
+                {
+                    SendLightBasedOnAvailability(ContactAvailability.Offline);
+                }
+            };
         }
 
         private void ApplyCurrentConversations()
@@ -137,12 +167,12 @@ namespace LuxaforLyncTool_Client
 
         private void NotifyOfChat()
         {
-            _lightClient.PulseColor(SimpleColors.Blue);
+            _lightClient.SendPulseColor(Color.Blue, Speed.Fast, 3);
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _lightClient.SendColor(SimpleColors.Off);
         }
     }
 }

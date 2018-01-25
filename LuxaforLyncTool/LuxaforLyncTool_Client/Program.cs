@@ -8,6 +8,8 @@ namespace LuxaforLyncTool_Client
 {
     static class Program
     {
+        private static Process clientProcess;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -18,15 +20,27 @@ namespace LuxaforLyncTool_Client
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Rather than actually running a WinForms app,
-            using (Process clientProcess = new Process())
+            using (clientProcess = new Process())
             {
                 // Start just run a process which displays an icon in the tray,
-                clientProcess.Display();
+                clientProcess.DisplayIcon();
                 // ... and listens for Lync events we care about
                 clientProcess.Listen();
 
+                // On exit, ensure the process disposes properly
+                Application.ApplicationExit += OnProcessExit;
+                AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+
+                // Run the application
                 Application.Run();
             }
         }
+
+        static void OnProcessExit(object sender, EventArgs e)
+        {
+            clientProcess.Dispose();
+        }
+
+
     }
 }

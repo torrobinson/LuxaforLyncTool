@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Globalization;
+using LuxaforLyncTool_Light.Color;
 using LuxaforLyncTool_Light.Device;
+using LuxaforLyncTool_Light.Helpers;
 using UsbHid;
 using UsbHid.USB.Classes.Messaging;
 
@@ -39,10 +41,12 @@ namespace LuxaforLyncTool_Light
         private void DeviceOnDisConnected(object sender, EventArgs e)
         {
             this.Status = ConnectionStatus.Disconnected;
-            throw new NotImplementedException();
+
+            // Send the initial Enable command
+            SendBytes(10, new byte[] {69});
         }
 
-        /// <summary>
+        /// <summary>1
         /// Executed when the device is connected to the host
         /// </summary>
         /// <param name="sender"></param>
@@ -55,17 +59,17 @@ namespace LuxaforLyncTool_Light
         #region HID Communication
 
         #region Sending Commands
-        private void SendByte(byte singleByte)
+        private void SendSimpleColorByte(byte singleByte)
         {;
-            SendBytes(new byte[] { singleByte });
+            if (this.Status == ConnectionStatus.Disconnected) return;
+            var command = new CommandMessage(Device.InputReportSize, 10, new byte[]{ singleByte });
+            Device.SendMessage(command);
         }
 
-        private void SendBytes(byte[] byteArray)
+        private void SendBytes(byte commandByte, byte[] byteArray)
         {
             if (this.Status == ConnectionStatus.Disconnected) return;
-
-            byte CommandDeskTime = 10;
-            var command = new CommandMessage(Device.InputReportSize, CommandDeskTime, byteArray);
+            var command = new CommandMessage(Device.InputReportSize, commandByte, byteArray);
             Device.SendMessage(command);
         }
         #endregion
@@ -73,17 +77,41 @@ namespace LuxaforLyncTool_Light
         #region Color Commands
         public void SendColor(char simpleColorCode)
         {
-            SendByte((byte)simpleColorCode);
+            SendSimpleColorByte((byte)simpleColorCode);
         }
         public void SendColor(string hex)
         {
-            int argb = Int32.Parse(hex.Replace("#", ""), NumberStyles.HexNumber);
+            System.Drawing.Color color = ColorHelpers.HexToColor(hex);
             throw new NotImplementedException();
         }
 
-        public void PulseColor(char simpleColorCode)
+        public void SendPulseColor(System.Drawing.Color color, byte speed, byte pulseCount)
         {
+            byte[] colorBytes = ColorHelpers.ColorToBytes(color);
             // TODO: actually flash and return to previous color
+            SendBytes(LightCommands.Strobe, new byte[]
+            {
+                LEDs.All,
+                colorBytes[0],
+                colorBytes[1],
+                colorBytes[2],
+                speed,
+                new Byte(),
+                pulseCount // repeats
+            });
+        }
+
+        public void SendComplexColor(System.Drawing.Color color)
+        {
+            byte[] colorBytes = ColorHelpers.ColorToBytes(color);
+            // TODO: actually flash and return to previous color
+            SendBytes(LightCommands.ComplexColor, new byte[]
+            {
+                LEDs.All,
+                colorBytes[0],
+                colorBytes[1],
+                colorBytes[2],
+            });
         }
 
         #endregion
