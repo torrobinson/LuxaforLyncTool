@@ -12,8 +12,13 @@ namespace LuxaforLyncTool_Lync
         // Our Lync client
         private LyncClient _lyncClient;
 
+        // The new message event handler. It is not initially known but must be bound to all initial conversations on process
+        //  start, which is why it's defined here early
         private EventHandler<MessageSentEventArgs> newMessageHandler;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ChatClient()
         {
             // Get the current Lync client
@@ -27,6 +32,10 @@ namespace LuxaforLyncTool_Lync
             };
         }
 
+        /// <summary>
+        /// Binds the new message handler to any new messages coming from a conversation participant
+        /// </summary>
+        /// <param name="participant"></param>
         private void BindNewMessageHandlerToOtherParticipant(Participant participant)
         {
             // That's not me
@@ -38,6 +47,10 @@ namespace LuxaforLyncTool_Lync
             }
         }
 
+        /// <summary>
+        /// Binds the new message event handler to all current participants of a conversation now, as well as when new participants join
+        /// </summary>
+        /// <param name="conversation"></param>
         public void BindHandlerToConversationIMs(Conversation conversation)
         {
             // When a person joins, do it
@@ -53,6 +66,10 @@ namespace LuxaforLyncTool_Lync
             }
         }
 
+        /// <summary>
+        /// Bind the status update event handler
+        /// </summary>
+        /// <param name="handler"></param>
         public void BindStatusUpdate(EventHandler<ContactInformationChangedEventArgs> handler)
         {
             if (_lyncClient != null)
@@ -61,6 +78,10 @@ namespace LuxaforLyncTool_Lync
             }
         }
 
+        /// <summary>
+        /// Bind the new conversation event handler
+        /// </summary>
+        /// <param name="handler"></param>
         public void BindNewConversation(EventHandler<ConversationManagerEventArgs> handler)
         {
             if (_lyncClient != null)
@@ -69,16 +90,29 @@ namespace LuxaforLyncTool_Lync
             }
         }
 
+        /// <summary>
+        /// Binds the new message event handler
+        /// </summary>
+        /// <param name="handler"></param>
         public void BindNewConversationMessage(EventHandler<MessageSentEventArgs> handler)
         {
+            // We just set the existing handler reference here, as we bound it ealier before this potentially had a value
             newMessageHandler = handler;
         }
 
+        /// <summary>
+        /// Gets the current availability of the logged-in Lync user
+        /// </summary>
+        /// <returns></returns>
         public ContactAvailability? GetAvailability()
         {
             return (ContactAvailability)_lyncClient.Self.Contact.GetContactInformation(ContactInformationType.Availability);
         }
 
+        /// <summary>
+        /// Gets the current conversations of the logged-in Lync user
+        /// </summary>
+        /// <returns></returns>
         public List<Conversation> GetCurrentConversations()
         {
             return _lyncClient.ConversationManager.Conversations.ToList();

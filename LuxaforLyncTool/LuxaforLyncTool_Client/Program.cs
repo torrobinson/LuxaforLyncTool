@@ -41,6 +41,5 @@ namespace LuxaforLyncTool_Client
             clientProcess.Dispose();
         }
 
-
     }
 }

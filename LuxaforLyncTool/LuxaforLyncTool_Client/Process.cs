@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using LuxaforLyncTool_Client.Properties;
 using LuxaforLyncTool_Client.Resources;
 using LuxaforLyncTool_Light;
-using LuxaforLyncTool_Light.Color;
 using LuxaforLyncTool_Light.Device;
 using LuxaforLyncTool_Lync;
 using Microsoft.Lync.Model;
@@ -23,11 +22,17 @@ namespace LuxaforLyncTool_Client
 
         private ToolStripMenuItem brightnessMenu;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Process()
         {
             _notifyIcon = new NotifyIcon();
         }
 
+        /// <summary>
+        /// Prepare and display the application's icon in the host's notification tray
+        /// </summary>
         public void DisplayIcon()
         {
             _notifyIcon.Text = Strings.ApplicationName;
@@ -89,6 +94,9 @@ namespace LuxaforLyncTool_Client
             _notifyIcon.ContextMenuStrip.Items.Add(exitOption);
         }
 
+        /// <summary>
+        /// Ensure that the brightness setting in the list of brightnesses is checked-off
+        /// </summary>
         public void CheckCurrentBrightnessItem()
         {
             if (_lightClient != null)
@@ -103,6 +111,9 @@ namespace LuxaforLyncTool_Client
             }
         }
 
+        /// <summary>
+        /// Set up listeners for all bound events that will interact with the lights
+        /// </summary>
         public void Listen()
         {
             // Create a new light client and connect
@@ -121,9 +132,13 @@ namespace LuxaforLyncTool_Client
             ApplyCurrentStatus();
             ApplyCurrentConversations();
 
+            // Initially check off the current brightness
             CheckCurrentBrightnessItem();
         }
 
+        /// <summary>
+        /// Light when the computer is locked
+        /// </summary>
         private void BindComputerLocked()
         {
             // On computer session change
@@ -146,6 +161,9 @@ namespace LuxaforLyncTool_Client
             };
         }
 
+        /// <summary>
+        /// Apply the bound handlers to all current conversations
+        /// </summary>
         private void ApplyCurrentConversations()
         {
             // Try find any current conversations and bind to new messages for them
@@ -156,6 +174,9 @@ namespace LuxaforLyncTool_Client
             }
         }
 
+        /// <summary>
+        /// Apply the bound handlers to the current status
+        /// </summary>
         private void ApplyCurrentStatus()
         {
             // Try fetch the current user availability and set the light to it
@@ -193,48 +214,59 @@ namespace LuxaforLyncTool_Client
             });
         }
 
+        /// <summary>
+        /// Mapping of Lync availabilities to light colors
+        /// </summary>
+        /// <param name="availability"></param>
         private void SendLightBasedOnAvailability(ContactAvailability availability)
         {
             // And send the appropriate color
             switch (availability)
             {
                 case ContactAvailability.Away:
-                    _lightClient.SendComplexColor(Color.Orange);
+                    _lightClient.SendColor(Color.Orange);
                     break;
                 case ContactAvailability.Busy:
-                    _lightClient.SendComplexColor(Color.Red);
+                    _lightClient.SendColor(Color.Red);
                     break;
                 case ContactAvailability.BusyIdle:
-                    _lightClient.SendComplexColor(Color.Red);
+                    _lightClient.SendColor(Color.Red);
                     break;
                 case ContactAvailability.DoNotDisturb:
-                    _lightClient.SendComplexColor(Color.Red);
+                    _lightClient.SendColor(Color.Red);
                     break;
                 case ContactAvailability.Free:
-                    _lightClient.SendComplexColor(Color.Green);
+                    _lightClient.SendColor(Color.Green);
                     break;
                 case ContactAvailability.FreeIdle:
-                    _lightClient.SendComplexColor(Color.Yellow);
+                    _lightClient.SendColor(Color.Yellow);
                     break;
                 case ContactAvailability.Offline:
-                    _lightClient.SendSimpleColor(SimpleColors.Off);
+                    _lightClient.SendColor(Color.Black);
                     break;
                 case ContactAvailability.TemporarilyAway:
-                    _lightClient.SendComplexColor(Color.Orange);
+                    _lightClient.SendColor(Color.Orange);
                     break;
                 default:
                     break;
             }
         }
 
+        /// <summary>
+        /// What to do when a new chat message occurs (both new conversations and new IMs)
+        /// </summary>
         private void NotifyOfChat()
         {
             _lightClient.SendPulseColor(Color.Blue, Speed.Fast, 3);
         }
 
+        /// <summary>
+        /// Teardown the application
+        /// </summary>
         public void Dispose()
         {
-            _lightClient.SendSimpleColor(SimpleColors.Off);
+            // Turn off the light before closing
+            _lightClient.SendColor(Color.Black);
         }
     }
 }

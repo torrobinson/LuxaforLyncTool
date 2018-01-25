@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Globalization;
-using LuxaforLyncTool_Light.Color;
 using LuxaforLyncTool_Light.Device;
 using LuxaforLyncTool_Light.Helpers;
 using UsbHid;
@@ -15,13 +14,14 @@ namespace LuxaforLyncTool_Light
         public const int VendorId = 0x04D8;
         public const int ProductId = 0xF372;
         public ConnectionStatus Status;
-
-        // Our paired device
         public static UsbHidDevice Device;
 
         // Out brightness setting
         public double Brightness = 1.0;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public LightClient()
         {
             // Instantiate new device
@@ -61,51 +61,54 @@ namespace LuxaforLyncTool_Light
 
         #region HID Communication
 
-        #region Sending Commands
-        private void SendSimpleColorByte(byte singleByte)
-        {;
-            if (this.Status == ConnectionStatus.Disconnected) return;
-            var command = new CommandMessage(Device.InputReportSize, 10, new byte[]{ singleByte });
-            Device.SendMessage(command);
-        }
-
+        #region Communication Commands
         private void SendBytes(byte commandByte, byte[] byteArray)
         {
+            // Cancel if not connected
             if (this.Status == ConnectionStatus.Disconnected) return;
+
+            // Otherwise, send a new command and command buffer
             var command = new CommandMessage(Device.InputReportSize, commandByte, byteArray);
             Device.SendMessage(command);
         }
         #endregion
 
         #region Color Commands
-        public void SendSimpleColor(char simpleColorCode)
-        {
-            SendSimpleColorByte((byte)simpleColorCode);
-        }
-
-        public void SendPulseColor(System.Drawing.Color color, byte speed, byte pulseCount, byte leds = 0xFF)
+        /// <summary>
+        /// Send a pulse request to the light. The light returns the color it started at when the pulse is complete
+        /// </summary>
+        /// <param name="color">The color the light should pulse</param>
+        /// <param name="speed">How fast the light should pulse</param>
+        /// <param name="pulseCount">How many times the light should pulse</param>
+        /// <param name="leds">Which LEDs should pulse</param>
+        public void SendPulseColor(System.Drawing.Color color, Speed speed, byte pulseCount, LED leds = LED.All)
         {
             byte[] colorBytes = ColorHelpers.ColorToBytes(color, this.Brightness);
             // TODO: actually flash and return to previous color
-            SendBytes(LightCommands.Strobe, new byte[]
+            SendBytes((byte)LightCommand.Strobe, new byte[]
             {
-                leds,
+                (byte)leds,
                 colorBytes[0],
                 colorBytes[1],
                 colorBytes[2],
-                speed,
+                (byte)speed,
                 new Byte(),
-                pulseCount // repeats
+                pulseCount 
             });
         }
 
-        public void SendComplexColor(System.Drawing.Color color, byte led = 0xFF)
+        /// <summary>
+        /// Send a request to permanently change into a specified color
+        /// </summary>
+        /// <param name="color">The color the light should become</param>
+        /// <param name="led">The LEDs that should change color</param>
+        public void SendColor(System.Drawing.Color color, LED led = LED.All)
         {
             byte[] colorBytes = ColorHelpers.ColorToBytes(color, this.Brightness);
             // TODO: actually flash and return to previous color
-            SendBytes(LightCommands.ComplexColor, new byte[]
+            SendBytes((byte)LightCommand.ComplexColor, new byte[]
             {
-                led,
+                (byte)led,
                 colorBytes[0],
                 colorBytes[1],
                 colorBytes[2],
