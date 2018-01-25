@@ -80,13 +80,13 @@ namespace LuxaforLyncTool_Light
             SendSimpleColorByte((byte)simpleColorCode);
         }
 
-        public void SendPulseColor(System.Drawing.Color color, byte speed, byte pulseCount)
+        public void SendPulseColor(System.Drawing.Color color, byte speed, byte pulseCount, byte leds = 0xFF)
         {
             byte[] colorBytes = ColorHelpers.ColorToBytes(color);
             // TODO: actually flash and return to previous color
             SendBytes(LightCommands.Strobe, new byte[]
             {
-                LEDs.All,
+                leds,
                 colorBytes[0],
                 colorBytes[1],
                 colorBytes[2],
@@ -96,13 +96,13 @@ namespace LuxaforLyncTool_Light
             });
         }
 
-        public void SendComplexColor(System.Drawing.Color color)
+        public void SendComplexColor(System.Drawing.Color color, byte led = 0xFF)
         {
             byte[] colorBytes = ColorHelpers.ColorToBytes(color);
             // TODO: actually flash and return to previous color
             SendBytes(LightCommands.ComplexColor, new byte[]
             {
-                LEDs.All,
+                led,
                 colorBytes[0],
                 colorBytes[1],
                 colorBytes[2],

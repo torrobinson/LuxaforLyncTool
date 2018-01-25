@@ -39,7 +39,7 @@ namespace LuxaforLyncTool_Client
             _notifyIcon.ContextMenuStrip.Items.Add(exitOption);
 
             var strobeTest = new ToolStripMenuItem { Text = "Strobe" };
-            strobeTest.Click += (sender, args) => { _lightClient.SendPulseColor(Color.Red, Speed.Fast, 5); };
+            strobeTest.Click += (sender, args) => { _lightClient.SendPulseColor(Color.Red, Speed.Fast, 5, LEDs.Back); };
             _notifyIcon.ContextMenuStrip.Items.Add(strobeTest);
         }
 
@@ -137,28 +137,28 @@ namespace LuxaforLyncTool_Client
             switch (availability)
             {
                 case ContactAvailability.Away:
-                    _lightClient.SendSimpleColor(SimpleColors.Yellow);
+                    _lightClient.SendComplexColor(Color.Orange);
                     break;
                 case ContactAvailability.Busy:
-                    _lightClient.SendSimpleColor(SimpleColors.Red);
+                    _lightClient.SendComplexColor(Color.Red);
                     break;
                 case ContactAvailability.BusyIdle:
-                    _lightClient.SendSimpleColor(SimpleColors.Red);
+                    _lightClient.SendComplexColor(Color.Red);
                     break;
                 case ContactAvailability.DoNotDisturb:
-                    _lightClient.SendSimpleColor(SimpleColors.Red);
+                    _lightClient.SendComplexColor(Color.Red);
                     break;
                 case ContactAvailability.Free:
-                    _lightClient.SendSimpleColor(SimpleColors.Green);
+                    _lightClient.SendComplexColor(Color.Green);
                     break;
                 case ContactAvailability.FreeIdle:
-                    _lightClient.SendSimpleColor(SimpleColors.Green);
+                    _lightClient.SendComplexColor(Color.Yellow);
                     break;
                 case ContactAvailability.Offline:
                     _lightClient.SendSimpleColor(SimpleColors.Off);
                     break;
                 case ContactAvailability.TemporarilyAway:
-                    _lightClient.SendSimpleColor(SimpleColors.Yellow);
+                    _lightClient.SendComplexColor(Color.Orange);
                     break;
                 default:
                     break;
