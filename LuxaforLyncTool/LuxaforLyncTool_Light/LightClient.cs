@@ -75,14 +75,9 @@ namespace LuxaforLyncTool_Light
         #endregion
 
         #region Color Commands
-        public void SendColor(char simpleColorCode)
+        public void SendSimpleColor(char simpleColorCode)
         {
             SendSimpleColorByte((byte)simpleColorCode);
-        }
-        public void SendColor(string hex)
-        {
-            System.Drawing.Color color = ColorHelpers.HexToColor(hex);
-            throw new NotImplementedException();
         }
 
         public void SendPulseColor(System.Drawing.Color color, byte speed, byte pulseCount)

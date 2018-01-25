@@ -137,28 +137,28 @@ namespace LuxaforLyncTool_Client
             switch (availability)
             {
                 case ContactAvailability.Away:
-                    _lightClient.SendColor(SimpleColors.Yellow);
+                    _lightClient.SendSimpleColor(SimpleColors.Yellow);
                     break;
                 case ContactAvailability.Busy:
-                    _lightClient.SendColor(SimpleColors.Red);
+                    _lightClient.SendSimpleColor(SimpleColors.Red);
                     break;
                 case ContactAvailability.BusyIdle:
-                    _lightClient.SendColor(SimpleColors.Red);
+                    _lightClient.SendSimpleColor(SimpleColors.Red);
                     break;
                 case ContactAvailability.DoNotDisturb:
-                    _lightClient.SendColor(SimpleColors.Red);
+                    _lightClient.SendSimpleColor(SimpleColors.Red);
                     break;
                 case ContactAvailability.Free:
-                    _lightClient.SendColor(SimpleColors.Green);
+                    _lightClient.SendSimpleColor(SimpleColors.Green);
                     break;
                 case ContactAvailability.FreeIdle:
-                    _lightClient.SendColor(SimpleColors.Green);
+                    _lightClient.SendSimpleColor(SimpleColors.Green);
                     break;
                 case ContactAvailability.Offline:
-                    _lightClient.SendColor(SimpleColors.Off);
+                    _lightClient.SendSimpleColor(SimpleColors.Off);
                     break;
                 case ContactAvailability.TemporarilyAway:
-                    _lightClient.SendColor(SimpleColors.Yellow);
+                    _lightClient.SendSimpleColor(SimpleColors.Yellow);
                     break;
                 default:
                     break;
@@ -172,7 +172,7 @@ namespace LuxaforLyncTool_Client
 
         public void Dispose()
         {
-            _lightClient.SendColor(SimpleColors.Off);
+            _lightClient.SendSimpleColor(SimpleColors.Off);
         }
     }
 }
