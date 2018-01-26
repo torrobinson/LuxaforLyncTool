@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using LuxaforLyncTool_Client.Properties;
 using LuxaforLyncTool_Client.Resources;
@@ -38,16 +39,34 @@ namespace LuxaforLyncTool_Client
             _notifyIcon.Text = Strings.ApplicationName;
             _notifyIcon.Icon = Images.TrayIcon;
             _notifyIcon.Visible = true;
+            ShowConnectedOptions();
+        }
 
+        private void ShowDisconnectedOptions()
+        {
             _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
 
             // Exit
             var exitOption = new ToolStripMenuItem { Text = Strings.Exit };
             exitOption.Click += (sender, args) => { Application.Exit(); };
-            
+
+            var warningOption = new ToolStripLabel() { Text = Strings.NotSignedIn };
+
+            _notifyIcon.ContextMenuStrip.Items.Add(warningOption);
+            _notifyIcon.ContextMenuStrip.Items.Add(exitOption);
+        }
+
+        private void ShowConnectedOptions()
+        {
+            _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
+
+            // Exit
+            var exitOption = new ToolStripMenuItem { Text = Strings.Exit };
+            exitOption.Click += (sender, args) => { Application.Exit(); };
+
 
             // Brightness
-            brightnessMenu = new ToolStripMenuItem { Text = Strings.Brightness};
+            brightnessMenu = new ToolStripMenuItem { Text = Strings.Brightness };
             ToolStripMenuItem quarterBrightnessItem = new ToolStripMenuItem { Text = "25%", Tag = 0.25, CheckOnClick = true };
             ToolStripMenuItem helfBrightnessItem = new ToolStripMenuItem { Text = "50%", Tag = 0.50, CheckOnClick = true };
             ToolStripMenuItem threeQuarterBrightnessItem = new ToolStripMenuItem { Text = "75%", Tag = 0.75, CheckOnClick = true };
@@ -82,7 +101,7 @@ namespace LuxaforLyncTool_Client
                 ApplyCurrentStatus();
             };
 
-            ToolStripMenuItem aboutItem = new ToolStripMenuItem() {Text = Strings.About};
+            ToolStripMenuItem aboutItem = new ToolStripMenuItem() { Text = Strings.About };
             aboutItem.Click += (sender, args) =>
             {
                 About about = new About();
@@ -92,6 +111,8 @@ namespace LuxaforLyncTool_Client
             _notifyIcon.ContextMenuStrip.Items.Add(brightnessMenu);
             _notifyIcon.ContextMenuStrip.Items.Add(aboutItem);
             _notifyIcon.ContextMenuStrip.Items.Add(exitOption);
+
+            CheckCurrentBrightnessItem();
         }
 
         /// <summary>
@@ -120,8 +141,47 @@ namespace LuxaforLyncTool_Client
             _lightClient = new LightClient();
 
             // Create a new chat client
-            _chatClient = new ChatClient();
+            _chatClient = new ChatClient()
+            {
+                ConnnectedAction = () =>
+                {
+                    SetupAllBinding();
+                    ShowConnectedMessage();
+                    ApplyCurrentStatus();
+                    ShowConnectedOptions();
+                },
+                DisconnectedAction = () =>
+                {
+                    ShowNotConnectedMessage();
+                    _lightClient.TurnOff();
+                    Task.Run(() =>
+                    {
+                        ShowDisconnectedOptions();
+                        _chatClient.WaitUntilReconnectedToClient();
+                        SetupAllBinding();
+                    });
+                }
+            };
 
+            // If we're not signed in now (on launch) then show a message and wait until we are
+            if (!_chatClient.IsSignedIn())
+            {
+                ShowNotConnectedMessage();
+                ShowDisconnectedOptions();
+                Task.Run(() =>
+                {
+                    _chatClient.WaitUntilReconnectedToClient();
+                    SetupAllBinding();
+                });
+            }
+            else
+            {
+                SetupAllBinding();
+            }
+        }
+
+        private void SetupAllBinding()
+        {
             // Bind to new changes
             BindStatusChanges();
             BindNewConversation();
@@ -134,6 +194,16 @@ namespace LuxaforLyncTool_Client
 
             // Initially check off the current brightness
             CheckCurrentBrightnessItem();
+        }
+
+        private void ShowNotConnectedMessage()
+        {
+            _notifyIcon.ShowBalloonTip(999, Strings.NotSignedIn, Strings.NotSignedInMessage, ToolTipIcon.Error);
+        }
+
+        private void ShowConnectedMessage()
+        {
+            _notifyIcon.ShowBalloonTip(999, Strings.SignedIn, Strings.SignedInMessage, ToolTipIcon.Info);
         }
 
         /// <summary>

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using LuxaforLyncTool_Lync.Helpers;
 using Microsoft.Lync.Internal.Utilities.Helpers;
 using Microsoft.Lync.Model;
 using Microsoft.Lync.Model.Conversation;
@@ -22,15 +26,88 @@ namespace LuxaforLyncTool_Lync
         public ChatClient()
         {
             // Get the current Lync client
-            _lyncClient = LyncClient.GetClient();
-
-            // Default binds
-            // When a new convo starts
-            _lyncClient.ConversationManager.ConversationAdded += (object sender, ConversationManagerEventArgs args) =>
-            {
-                BindHandlerToConversationIMs(args.Conversation);
-            };
+            ConnectToLync();
         }
+
+        public Action DisconnectedAction { get; set; }
+        public Action ConnnectedAction { get; set; }
+
+        private ConnectionStatus LastKnownStatus = ConnectionStatus.Connected;
+
+        private void ClientStateChangedEvent(object sender, ClientStateChangedEventArgs args)
+        {
+            if (args.OldState == ClientState.SignedIn && args.NewState != ClientState.SignedIn)
+            {
+                DisconnectedAction?.Invoke();
+            }
+            if (args.OldState != ClientState.SignedIn && args.NewState == ClientState.SignedIn)
+            {
+                ConnnectedAction?.Invoke();
+            }
+        }
+
+        private void ConversationAddedHandler(object sender, ConversationManagerEventArgs args)
+        {
+            BindHandlerToConversationIMs(args.Conversation);
+        }
+
+        /// <summary>
+        /// Try connect to the current lync instance
+        /// </summary>
+        private void ConnectToLync()
+        {
+            // Connect to Lync
+            try
+            {
+                _lyncClient = LyncClient.GetClient();
+
+                if (this.IsSignedIn())
+                {
+                    ConnnectedAction?.Invoke();
+                    LastKnownStatus = ConnectionStatus.Connected;
+                }
+
+                // And when we ever disconnect, try to establish again
+                _lyncClient.StateChanged -= ClientStateChangedEvent;
+                _lyncClient.StateChanged += ClientStateChangedEvent;
+
+                // Default binds
+                // When a new convo starts
+                _lyncClient.ConversationManager.ConversationAdded -= ConversationAddedHandler;
+                _lyncClient.ConversationManager.ConversationAdded += ConversationAddedHandler;
+            }
+            catch (ClientNotFoundException ex)
+            {
+                if (LastKnownStatus == ConnectionStatus.Connected)
+                {
+                    DisconnectedAction?.Invoke();
+                }
+                else
+                {
+                    LastKnownStatus = ConnectionStatus.Disconnected;
+                }
+            }
+        }
+
+        public void WaitUntilReconnectedToClient()
+        {
+            Timer timer = new Timer(o => {}, null, Timeout.Infinite, Timeout.Infinite);
+            timer = new Timer(o =>
+            {
+                if (!IsSignedIn())
+                {
+                    LastKnownStatus = ConnectionStatus.Disconnected;
+                    // Try fetch again
+                    ConnectToLync();
+                }
+                else
+                {
+                    // Signed in, cancel timer
+                    timer.Change(Timeout.Infinite, Timeout.Infinite);
+                }
+            }, null, 0, 5000);
+        }
+
 
         /// <summary>
         /// Binds the new message handler to any new messages coming from a conversation participant
@@ -43,6 +120,7 @@ namespace LuxaforLyncTool_Lync
             {
                 // When they send a message
                 InstantMessageModality instantMessageModality = participant.Modalities[ModalityTypes.InstantMessage] as InstantMessageModality;
+                instantMessageModality.InstantMessageReceived -= newMessageHandler;
                 instantMessageModality.InstantMessageReceived += newMessageHandler;
             }
         }
@@ -74,6 +152,7 @@ namespace LuxaforLyncTool_Lync
         {
             if (_lyncClient != null)
             {
+                _lyncClient.Self.Contact.ContactInformationChanged -= handler;
                 _lyncClient.Self.Contact.ContactInformationChanged += handler;
             }
         }
@@ -86,6 +165,7 @@ namespace LuxaforLyncTool_Lync
         {
             if (_lyncClient != null)
             {
+                _lyncClient.ConversationManager.ConversationAdded -= handler;
                 _lyncClient.ConversationManager.ConversationAdded += handler;
             }
         }
@@ -116,6 +196,11 @@ namespace LuxaforLyncTool_Lync
         public List<Conversation> GetCurrentConversations()
         {
             return _lyncClient.ConversationManager.Conversations.ToList();
+        }
+
+        public bool IsSignedIn()
+        {
+            return _lyncClient?.Self?.Contact != null;
         }
     }
 }

@@ -36,6 +36,11 @@ namespace LuxaforLyncTool_Light
             Device.Connect();
         }
 
+        public void TurnOff()
+        {
+            this.SendColor(Color.Black);
+        }
+
         /// <summary>
         /// Executed when the device is diconnected from the host
         /// </summary>

@@ -95,5 +95,41 @@ namespace LuxaforLyncTool_Client.Resources {
                 return ResourceManager.GetString("Exit", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not Signed In.
+        /// </summary>
+        internal static string NotSignedIn {
+            get {
+                return ResourceManager.GetString("NotSignedIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You&apos;re not signed into Skype/Lync, and so a connection could not be established. Please sign in now..
+        /// </summary>
+        internal static string NotSignedInMessage {
+            get {
+                return ResourceManager.GetString("NotSignedInMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Signed In.
+        /// </summary>
+        internal static string SignedIn {
+            get {
+                return ResourceManager.GetString("SignedIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your light is now successfully syced with your Lync/Skype status.
+        /// </summary>
+        internal static string SignedInMessage {
+            get {
+                return ResourceManager.GetString("SignedInMessage", resourceCulture);
+            }
+        }
     }
 }
