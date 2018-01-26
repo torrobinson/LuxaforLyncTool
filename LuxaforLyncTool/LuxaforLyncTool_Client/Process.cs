@@ -160,7 +160,7 @@ namespace LuxaforLyncTool_Client
                     Task.Run(() =>
                     {
                         ShowDisconnectedOptions();
-                        _chatClient.WaitUntilReconnectedToClient.Start();
+                        _chatClient.WaitUntilReconnectedToClient();
                         SetupAllBinding();
                     });
                 }
@@ -173,7 +173,7 @@ namespace LuxaforLyncTool_Client
                 ShowDisconnectedOptions();
                 Task.Run(() =>
                 {
-                    _chatClient.WaitUntilReconnectedToClient.Start();
+                    _chatClient.WaitUntilReconnectedToClient();
                     SetupAllBinding();
                 });
             }
