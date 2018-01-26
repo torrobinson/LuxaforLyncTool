@@ -239,7 +239,7 @@ namespace LuxaforLyncTool_Client
                     _lightClient.SendColor(Color.Green);
                     break;
                 case ContactAvailability.FreeIdle:
-                    _lightClient.SendColor(Color.Yellow);
+                    _lightClient.SendColor(Color.Orange);
                     break;
                 case ContactAvailability.Offline:
                     _lightClient.SendColor(Color.Black);
