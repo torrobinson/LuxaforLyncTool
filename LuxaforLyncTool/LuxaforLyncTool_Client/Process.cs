@@ -18,6 +18,8 @@ namespace LuxaforLyncTool_Client
     {
         private readonly NotifyIcon _notifyIcon;
 
+        private Settings Settings;
+
         private LightClient _lightClient;
         private ChatClient _chatClient;
 
@@ -28,6 +30,7 @@ namespace LuxaforLyncTool_Client
         /// </summary>
         public Process()
         {
+            this.Settings = new Settings();
             _notifyIcon = new NotifyIcon();
         }
 
@@ -138,10 +141,10 @@ namespace LuxaforLyncTool_Client
         public void Listen()
         {
             // Create a new light client and connect
-            _lightClient = new LightClient();
+            _lightClient = new LightClient(defaultBrightness: this.Settings.Brightness);
 
             // Create a new chat client
-            _chatClient = new ChatClient()
+            _chatClient = new ChatClient(defaultReconnectionMilliseconds: this.Settings.ConnectionFailureRetryMilliseconds)
             {
                 ConnnectedAction = () =>
                 {
@@ -157,20 +160,20 @@ namespace LuxaforLyncTool_Client
                     Task.Run(() =>
                     {
                         ShowDisconnectedOptions();
-                        _chatClient.WaitUntilReconnectedToClient();
+                        _chatClient.WaitUntilReconnectedToClient.Start();
                         SetupAllBinding();
                     });
                 }
             };
 
             // If we're not signed in now (on launch) then show a message and wait until we are
-            if (!_chatClient.IsSignedIn())
+            if (!_chatClient.IsSignedIn)
             {
                 ShowNotConnectedMessage();
                 ShowDisconnectedOptions();
                 Task.Run(() =>
                 {
-                    _chatClient.WaitUntilReconnectedToClient();
+                    _chatClient.WaitUntilReconnectedToClient.Start();
                     SetupAllBinding();
                 });
             }

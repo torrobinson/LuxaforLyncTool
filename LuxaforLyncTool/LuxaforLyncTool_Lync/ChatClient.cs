@@ -14,17 +14,23 @@ namespace LuxaforLyncTool_Lync
     public class ChatClient
     {
         // Our Lync client
-        private LyncClient _lyncClient;
+        private static LyncClient _lyncClient;
+
+        public bool IsSignedIn => _lyncClient?.Self?.Contact != null;
 
         // The new message event handler. It is not initially known but must be bound to all initial conversations on process
         //  start, which is why it's defined here early
         private EventHandler<MessageSentEventArgs> newMessageHandler;
 
+        private int reconnectionMilliseconds;
+
         /// <summary>
         /// Constructor
         /// </summary>
-        public ChatClient()
+        public ChatClient(int defaultReconnectionMilliseconds)
         {
+            this.reconnectionMilliseconds = defaultReconnectionMilliseconds;
+
             // Get the current Lync client
             ConnectToLync();
         }
@@ -32,7 +38,7 @@ namespace LuxaforLyncTool_Lync
         public Action DisconnectedAction { get; set; }
         public Action ConnnectedAction { get; set; }
 
-        private ConnectionStatus LastKnownStatus = ConnectionStatus.Connected;
+        private ConnectionStatus LastKnownStatus { get; set; } = ConnectionStatus.Connected;
 
         private void ClientStateChangedEvent(object sender, ClientStateChangedEventArgs args)
         {
@@ -61,7 +67,7 @@ namespace LuxaforLyncTool_Lync
             {
                 _lyncClient = LyncClient.GetClient();
 
-                if (this.IsSignedIn())
+                if (this.IsSignedIn)
                 {
                     ConnnectedAction?.Invoke();
                     LastKnownStatus = ConnectionStatus.Connected;
@@ -91,21 +97,13 @@ namespace LuxaforLyncTool_Lync
 
         public void WaitUntilReconnectedToClient()
         {
-            Timer timer = new Timer(o => {}, null, Timeout.Infinite, Timeout.Infinite);
-            timer = new Timer(o =>
+            while (!this.IsSignedIn)
             {
-                if (!IsSignedIn())
-                {
-                    LastKnownStatus = ConnectionStatus.Disconnected;
-                    // Try fetch again
-                    ConnectToLync();
-                }
-                else
-                {
-                    // Signed in, cancel timer
-                    timer.Change(Timeout.Infinite, Timeout.Infinite);
-                }
-            }, null, 0, 5000);
+                LastKnownStatus = ConnectionStatus.Disconnected;
+                Task.Delay(this.reconnectionMilliseconds).Wait();
+                // Try fetch again
+                ConnectToLync();
+            }
         }
 
 
@@ -196,11 +194,6 @@ namespace LuxaforLyncTool_Lync
         public List<Conversation> GetCurrentConversations()
         {
             return _lyncClient.ConversationManager.Conversations.ToList();
-        }
-
-        public bool IsSignedIn()
-        {
-            return _lyncClient?.Self?.Contact != null;
         }
     }
 }

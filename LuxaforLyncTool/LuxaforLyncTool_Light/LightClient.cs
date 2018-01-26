@@ -22,8 +22,10 @@ namespace LuxaforLyncTool_Light
         /// <summary>
         /// Constructor
         /// </summary>
-        public LightClient()
+        public LightClient(double defaultBrightness)
         {
+            this.Brightness = defaultBrightness;
+
             // Instantiate new device
             Device = new UsbHidDevice(VendorId, ProductId);
 
