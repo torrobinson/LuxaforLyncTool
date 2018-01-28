@@ -8,5 +8,5 @@ script:
   - cd LuxaforLyncTool_Light
   - dotnet build LuxaforLyncTool_Light.csproj -c Release
   - cd ..\LuxaforLyncTool_Lync
-  - dotnet build LuxaforLyncTool_Lync\LuxaforLyncTool_Lync.csproj -c Release
+  - dotnet build LuxaforLyncTool_Lync.csproj -c Release
   #- dotnet build -c Release -f net461
