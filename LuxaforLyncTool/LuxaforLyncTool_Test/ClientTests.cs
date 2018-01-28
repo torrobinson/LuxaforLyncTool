@@ -1,13 +1,13 @@
 ﻿using System;
 using LuxaforLyncTool_Client;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace LuxaforLyncTool_Test
 {
-    [TestClass]
+    [TestFixture]
     public class ClientTests
     {
-        [TestMethod]
+        [TestCase] 
         public void DefaultBrightness_IsValid()
         {
             Settings settings = new Settings();
