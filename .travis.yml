@@ -1,5 +1,4 @@
 language: csharp
-#mono: none
 dotnet: 2.0.0
 solution: LuxaforLyncTool/LuxaforLyncTool.sln
 script:
@@ -12,4 +11,4 @@ script:
   - dotnet build LuxaforLyncTool_Lync.csproj -c Release
   - cd ..
   - cd LuxaforLyncTool_Client
-  - msbuild LuxaforLyncTool_Client.csproj /p:Configuration=Release
+  - msbuild LuxaforLyncTool_Client.csproj /t:Build /p:Configuration=Release
