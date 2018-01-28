@@ -2,4 +2,3 @@ language: csharp
 solution: LuxaforLyncTool/LuxaforLyncTool.sln
 install:
   - msbuild /t:Restore LuxaforLyncTool/LuxaforLyncTool.sln
-  #- nuget restore LuxaforLyncTool/LuxaforLyncTool.sln
