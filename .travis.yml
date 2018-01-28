@@ -1,4 +1,4 @@
 language: csharp
 solution: LuxaforLyncTool/LuxaforLyncTool.sln
 before_script:
-  #- nuget restore LuxaforLyncTool/LuxaforLyncTool.sln
+  - nuget restore LuxaforLyncTool/LuxaforLyncTool.sln
