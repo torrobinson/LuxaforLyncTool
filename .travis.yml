@@ -12,4 +12,4 @@ script:
   - dotnet build LuxaforLyncTool_Lync.csproj -c Release
   - cd ..
   - cd LuxaforLyncTool_Client
-  - xbuild LuxaforLyncTool_Client /p:Configuration=Release
+  - msbuild LuxaforLyncTool_Client.csproj /p:Configuration=Release
