@@ -3,25 +3,20 @@ dotnet: 2.0.0
 solution: LuxaforLyncTool/LuxaforLyncTool.sln
 install:
   # Install an NUnit test runner
-  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+  - nuget install NUnit.Runners -Version 3.8.0 -OutputDirectory testrunner
 script:
   # Restore nuget packages
   - cd LuxaforLyncTool
   - dotnet restore
+  - cd ..
   
   # Individually build the .netstandard projects
-  - cd LuxaforLyncTool_Light
-  - dotnet build LuxaforLyncTool_Light.csproj -c Release
+  - dotnet build .\LuxaforLyncTool\LuxaforLyncTool_Light\LuxaforLyncTool_Light.csproj -c Release
   
-  - cd ..
-  - cd LuxaforLyncTool_Lync
-  - dotnet build LuxaforLyncTool_Lync.csproj -c Release
+  - dotnet build .\LuxaforLyncTool\LuxaforLyncTool_Lync\LuxaforLyncTool_Lync.csproj -c Release
   
   # build the WinForms project
-  - cd ..
-  - cd LuxaforLyncTool_Client
-  - msbuild LuxaforLyncTool_Client.csproj /t:Build /p:Configuration=Release
+  - msbuild .\LuxaforLyncTool\LuxaforLyncTool_Client\LuxaforLyncTool_Client.csproj /t:Build /p:Configuration=Release
   
   # Run the unit tests
-  - cd LuxaforLyncTool_Test
-  - mono ../../testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe bin\Release\LuxaforLyncTool_Test.dll
+  - mono .\testrunner\NUnit.Runners.3.8.0\tools\nunit-console.exe LuxaforLyncTool\LuxaforLyncTool_Test\bin\Release\LuxaforLyncTool_Test.dll
