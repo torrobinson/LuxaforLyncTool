@@ -17,7 +17,7 @@ namespace LuxaforLyncTool_Light
         public static UsbHidDevice Device;
 
         // Out brightness setting
-        public double Brightness = 1.0;
+        public double Brightness = ;
 
         /// <summary>
         /// Constructor
