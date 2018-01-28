@@ -1,4 +1,4 @@
-# LuxaforLyncTool
+# LuxaforLyncTool [![Build Status](https://travis-ci.org/torrobinson/LuxaforLyncTool.svg?branch=master)](https://travis-ci.org/torrobinson/LuxaforLyncTool)
 
 ## What
 A service for both sending current Lync status to your Luxafor LED notification light, and notifying you of new Lync messages (both without running the official Luxafor software)
