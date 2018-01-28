@@ -1,4 +1,9 @@
 language: csharp
 mono: none
-solution: LuxaforLyncTool/LuxaforLyncTool.sln
+#solution: LuxaforLyncTool/LuxaforLyncTool.sln
 
+install:
+  - msbuild /t:Restore LuxaforLyncTool/LuxaforLyncTool.sln
+  
+script:
+  - msbuild /t:Build /p:Configuration=Release LuxaforLyncTool/LuxaforLyncTool.sln
