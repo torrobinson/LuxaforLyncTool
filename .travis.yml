@@ -21,5 +21,8 @@ script:
   - ls
   - cd TestRunner
   - ls
-  - cd ..
-  - mono ".\TestRunner\NUnit.ConsoleRunner.3.8.0\tools\nunit-console.exe" ".\LuxaforLyncTool\LuxaforLyncTool_Test\bin\Release\LuxaforLyncTool_Test.dll"
+  - cd NUnit.ConsoleRunner.3.8.0
+  - ls
+  - cd tools
+  - ls
+  #- mono ".\TestRunner\NUnit.ConsoleRunner.3.8.0\tools\nunit-console.exe" ".\LuxaforLyncTool\LuxaforLyncTool_Test\bin\Release\LuxaforLyncTool_Test.dll"
