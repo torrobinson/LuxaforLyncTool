@@ -129,4 +129,16 @@
   <data name="Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
+  <data name="NotSignedIn" xml:space="preserve">
+    <value>Not Signed In</value>
+  </data>
+  <data name="NotSignedInMessage" xml:space="preserve">
+    <value>You're not signed into Skype/Lync, and so a connection could not be established. Please sign in now.</value>
+  </data>
+  <data name="SignedIn" xml:space="preserve">
+    <value>Signed In</value>
+  </data>
+  <data name="SignedInMessage" xml:space="preserve">
+    <value>Your light is now successfully syced with your Lync/Skype status</value>
+  </data>
 </root>
