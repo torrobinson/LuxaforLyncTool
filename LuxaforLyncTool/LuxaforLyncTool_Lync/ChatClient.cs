@@ -22,15 +22,11 @@ namespace LuxaforLyncTool_Lync
         //  start, which is why it's defined here early
         private EventHandler<MessageSentEventArgs> newMessageHandler;
 
-        private int reconnectionMilliseconds;
-
         /// <summary>
         /// Constructor
         /// </summary>
-        public ChatClient(int defaultReconnectionMilliseconds)
+        public ChatClient()
         {
-            this.reconnectionMilliseconds = defaultReconnectionMilliseconds;
-
             // Get the current Lync client
             ConnectToLync();
         }
@@ -95,17 +91,10 @@ namespace LuxaforLyncTool_Lync
             }
         }
 
-        public void WaitUntilReconnectedToClient()
+        public void Connect()
         {
-            while (!this.IsSignedIn)
-            {
-                LastKnownStatus = ConnectionStatus.Disconnected;
-                Task.Delay(this.reconnectionMilliseconds).Wait();
-                // Try fetch again
-                ConnectToLync();
-            }
+            this.ConnectToLync();
         }
-
 
         /// <summary>
         /// Binds the new message handler to any new messages coming from a conversation participant

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Management;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LuxaforLyncTool_Client.Properties;
@@ -51,11 +52,19 @@ namespace LuxaforLyncTool_Client
 
             // Exit
             var exitOption = new ToolStripMenuItem { Text = Strings.Exit };
-            exitOption.Click += (sender, args) => { Application.Exit(); };
+            exitOption.Click += (sender, args) =>
+            {
+                Application.Exit();
+            };
 
-            var warningOption = new ToolStripLabel() { Text = Strings.NotSignedIn };
+            var reconnectOption = new ToolStripMenuItem { Text = Strings.Reconnect };
+            reconnectOption.Click += (sender, args) =>
+            {
+                _chatClient.Connect();
+                SetupAllBinding();
+            };
 
-            _notifyIcon.ContextMenuStrip.Items.Add(warningOption);
+            _notifyIcon.ContextMenuStrip.Items.Add(reconnectOption);
             _notifyIcon.ContextMenuStrip.Items.Add(exitOption);
         }
 
@@ -144,7 +153,7 @@ namespace LuxaforLyncTool_Client
             _lightClient = new LightClient(defaultBrightness: this.Settings.Brightness);
 
             // Create a new chat client
-            _chatClient = new ChatClient(defaultReconnectionMilliseconds: this.Settings.ConnectionFailureRetryMilliseconds)
+            _chatClient = new ChatClient()
             {
                 ConnnectedAction = () =>
                 {
@@ -157,12 +166,7 @@ namespace LuxaforLyncTool_Client
                 {
                     ShowNotConnectedMessage();
                     _lightClient.TurnOff();
-                    Task.Run(() =>
-                    {
-                        ShowDisconnectedOptions();
-                        _chatClient.WaitUntilReconnectedToClient();
-                        SetupAllBinding();
-                    });
+                    ShowDisconnectedOptions();
                 }
             };
 
@@ -171,16 +175,21 @@ namespace LuxaforLyncTool_Client
             {
                 ShowNotConnectedMessage();
                 ShowDisconnectedOptions();
-                Task.Run(() =>
-                {
-                    _chatClient.WaitUntilReconnectedToClient();
-                    SetupAllBinding();
-                });
             }
             else
             {
                 SetupAllBinding();
             }
+
+            // When a new Lync process starts, try connect to it
+            ManagementEventWatcher newLyncProcessWatcher = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStartTrace WHERE ProcessName='lync.exe'");
+            newLyncProcessWatcher.EventArrived += (sender, args) =>
+            {
+                ShowManualReconnectMessage();
+            };
+            newLyncProcessWatcher.Start();
+
+
         }
 
         private void SetupAllBinding()
@@ -207,6 +216,11 @@ namespace LuxaforLyncTool_Client
         private void ShowConnectedMessage()
         {
             _notifyIcon.ShowBalloonTip(999, Strings.SignedIn, Strings.SignedInMessage, ToolTipIcon.Info);
+        }
+
+        private void ShowManualReconnectMessage()
+        {
+            _notifyIcon.ShowBalloonTip(999, Strings.NotSignedIn, Strings.ManualReconnectMessage, ToolTipIcon.Error);
         }
 
         /// <summary>
