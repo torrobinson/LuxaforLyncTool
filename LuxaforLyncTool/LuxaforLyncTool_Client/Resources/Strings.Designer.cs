@@ -97,6 +97,15 @@ namespace LuxaforLyncTool_Client.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A new Skype/Lync client was detected. When you&apos;re signed-in, please right-click this icon and Reconnect.
+        /// </summary>
+        internal static string ManualReconnectMessage {
+            get {
+                return ResourceManager.GetString("ManualReconnectMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not Signed In.
         /// </summary>
         internal static string NotSignedIn {
@@ -111,6 +120,15 @@ namespace LuxaforLyncTool_Client.Resources {
         internal static string NotSignedInMessage {
             get {
                 return ResourceManager.GetString("NotSignedInMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reconnect.
+        /// </summary>
+        internal static string Reconnect {
+            get {
+                return ResourceManager.GetString("Reconnect", resourceCulture);
             }
         }
         

@@ -22,15 +22,11 @@ namespace LuxaforLyncTool_Lync
         //  start, which is why it's defined here early
         private EventHandler<MessageSentEventArgs> newMessageHandler;
 
-        private int reconnectionMilliseconds;
-
         /// <summary>
         /// Constructor
         /// </summary>
-        public ChatClient(int defaultReconnectionMilliseconds)
+        public ChatClient()
         {
-            this.reconnectionMilliseconds = defaultReconnectionMilliseconds;
-
             // Get the current Lync client
             ConnectToLync();
         }
@@ -95,17 +91,10 @@ namespace LuxaforLyncTool_Lync
             }
         }
 
-        public void WaitUntilReconnectedToClient()
+        public void Connect()
         {
-            while (!this.IsSignedIn)
-            {
-                LastKnownStatus = ConnectionStatus.Disconnected;
-                Task.Delay(this.reconnectionMilliseconds).Wait();
-                // Try fetch again
-                ConnectToLync();
-            }
+            this.ConnectToLync();
         }
-
 
         /// <summary>
         /// Binds the new message handler to any new messages coming from a conversation participant
@@ -148,7 +137,7 @@ namespace LuxaforLyncTool_Lync
         /// <param name="handler"></param>
         public void BindStatusUpdate(EventHandler<ContactInformationChangedEventArgs> handler)
         {
-            if (_lyncClient != null)
+            if (_lyncClient?.Self?.Contact != null)
             {
                 _lyncClient.Self.Contact.ContactInformationChanged -= handler;
                 _lyncClient.Self.Contact.ContactInformationChanged += handler;
@@ -184,7 +173,14 @@ namespace LuxaforLyncTool_Lync
         /// <returns></returns>
         public ContactAvailability? GetAvailability()
         {
-            return (ContactAvailability)_lyncClient.Self.Contact.GetContactInformation(ContactInformationType.Availability);
+            if (_lyncClient?.Self?.Contact != null)
+            {
+                return (ContactAvailability) _lyncClient.Self.Contact.GetContactInformation(ContactInformationType.Availability);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -193,7 +189,14 @@ namespace LuxaforLyncTool_Lync
         /// <returns></returns>
         public List<Conversation> GetCurrentConversations()
         {
-            return _lyncClient.ConversationManager.Conversations.ToList();
+            if (_lyncClient != null)
+            {
+                return _lyncClient.ConversationManager.Conversations.ToList();
+            }
+            else
+            {
+                return new List<Conversation>();
+            }
         }
     }
 }

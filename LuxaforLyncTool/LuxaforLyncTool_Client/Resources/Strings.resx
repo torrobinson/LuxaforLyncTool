@@ -129,11 +129,17 @@
   <data name="Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
+  <data name="ManualReconnectMessage" xml:space="preserve">
+    <value>A new Skype/Lync client was detected. When you're signed-in, please right-click this icon and Reconnect</value>
+  </data>
   <data name="NotSignedIn" xml:space="preserve">
     <value>Not Signed In</value>
   </data>
   <data name="NotSignedInMessage" xml:space="preserve">
     <value>You're not signed into Skype/Lync, and so a connection could not be established. Please sign in now.</value>
+  </data>
+  <data name="Reconnect" xml:space="preserve">
+    <value>Reconnect</value>
   </data>
   <data name="SignedIn" xml:space="preserve">
     <value>Signed In</value>
