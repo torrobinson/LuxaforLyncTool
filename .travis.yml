@@ -1,6 +1,2 @@
 language: csharp
-mono: none
-script:
-  - ls
-  - cd LuxaforLyncTool
-  - xbuild /p:Configuration=Release LuxaforLyncTool.sln
+solution: LuxaforLyncTool/LuxaforLyncTool.sln
