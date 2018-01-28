@@ -1,5 +1,7 @@
 language: csharp
 mono: none
+dotnet: 2.0.0
+solution: LuxaforLyncTool/LuxaforLyncTool.sln
 script:
   - cd LuxaforLyncTool
   - dotnet restore
