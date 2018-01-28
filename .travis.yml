@@ -18,17 +18,17 @@ script:
   - msbuild ".\LuxaforLyncTool\LuxaforLyncTool_Client\LuxaforLyncTool_Client.csproj" /t:Build /p:Configuration=Release
   
   # Build the tests
-  - msbuild ".\LuxaforLyncTool\LuxaforLyncTool_Test\*.csproj" /t:Build /p:Configuration=Release
+  - msbuild ".\LuxaforLyncTool\LuxaforLyncTool_Test\LuxaforLyncTool_Test.csproj" /t:Build /p:Configuration=Release
   
   # Run the unit tests
   - mono "./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe" ./LuxaforLyncTool/LuxaforLyncTool_Test/bin/Release/LuxaforLyncTool_Test.dll
   
-  - ls
-  - cd LuxaforLyncTool
-  - ls
-  - cd LuxaforLyncTool_Test
-  - ls
-  - cd bin
-  - ls
-  - cd Release
-  - ls
+  #- ls
+  #- cd LuxaforLyncTool
+  #- ls
+  #- cd LuxaforLyncTool_Test
+  #- ls
+  #- cd bin
+  #- ls
+  #- cd Release
+  #- ls
