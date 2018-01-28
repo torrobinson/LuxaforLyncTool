@@ -24,4 +24,4 @@ script:
   
   # Run the unit tests
   - cd LuxaforLyncTool_Test
-  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe bin\Release\LuxaforLyncTool_Test.dll
+  - mono ../../testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe bin\Release\LuxaforLyncTool_Test.dll
