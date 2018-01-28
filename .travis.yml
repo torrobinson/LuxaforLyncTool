@@ -5,4 +5,4 @@ solution: LuxaforLyncTool/LuxaforLyncTool.sln
 script:
   - cd LuxaforLyncTool
   - dotnet restore
-  - dotnet build -c Release
+  - dotnet build -c Release -f net461
