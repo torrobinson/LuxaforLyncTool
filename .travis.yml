@@ -11,11 +11,11 @@ script:
   - cd ..
   
   # Individually build the .netstandard projects
-  - dotnet build LuxaforLyncTool\LuxaforLyncTool_Light\LuxaforLyncTool_Light.csproj -c Release
-  - dotnet build LuxaforLyncTool\LuxaforLyncTool_Lync\LuxaforLyncTool_Lync.csproj -c Release
+  - dotnet build ".\LuxaforLyncTool\LuxaforLyncTool_Light\LuxaforLyncTool_Light.csproj" -c Release
+  - dotnet build ".\LuxaforLyncTool\LuxaforLyncTool_Lync\LuxaforLyncTool_Lync.csproj" -c Release
   
   # build the WinForms project
-  - msbuild LuxaforLyncTool\LuxaforLyncTool_Client\LuxaforLyncTool_Client.csproj /t:Build /p:Configuration=Release
+  - msbuild ".\LuxaforLyncTool\LuxaforLyncTool_Client\LuxaforLyncTool_Client.csproj" /t:Build /p:Configuration=Release
   
   # Run the unit tests
-  - mono TestRunner\NUnit.Runners.3.8.0\tools\nunit-console.exe LuxaforLyncTool\LuxaforLyncTool_Test\bin\Release\LuxaforLyncTool_Test.dll
+  - mono TestRunner\NUnit.Runners.3.8.0\tools\nunit-console.exe ".\LuxaforLyncTool\LuxaforLyncTool_Test\bin\Release\LuxaforLyncTool_Test.dll"
