@@ -5,4 +5,6 @@ solution: LuxaforLyncTool/LuxaforLyncTool.sln
 script:
   - cd LuxaforLyncTool
   - dotnet restore
-  - dotnet build -c Release -f net461
+  - dotnet build \LuxaforLyncTool_Light\LuxaforLyncTool_Light.csproj -c Release
+  - dotnet build \LuxaforLyncTool_Lync\LuxaforLyncTool_Lync.csproj -c Release
+  #- dotnet build -c Release -f net461
