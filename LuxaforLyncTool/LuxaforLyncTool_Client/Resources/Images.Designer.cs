@@ -69,5 +69,15 @@ namespace LuxaforLyncTool_Client.Resources {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon TrayIconError {
+            get {
+                object obj = ResourceManager.GetObject("TrayIconError", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }

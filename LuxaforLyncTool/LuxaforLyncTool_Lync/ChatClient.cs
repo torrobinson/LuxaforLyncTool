@@ -137,7 +137,7 @@ namespace LuxaforLyncTool_Lync
         /// <param name="handler"></param>
         public void BindStatusUpdate(EventHandler<ContactInformationChangedEventArgs> handler)
         {
-            if (_lyncClient != null)
+            if (_lyncClient?.Self?.Contact != null)
             {
                 _lyncClient.Self.Contact.ContactInformationChanged -= handler;
                 _lyncClient.Self.Contact.ContactInformationChanged += handler;
@@ -173,7 +173,14 @@ namespace LuxaforLyncTool_Lync
         /// <returns></returns>
         public ContactAvailability? GetAvailability()
         {
-            return (ContactAvailability)_lyncClient.Self.Contact.GetContactInformation(ContactInformationType.Availability);
+            if (_lyncClient?.Self?.Contact != null)
+            {
+                return (ContactAvailability) _lyncClient.Self.Contact.GetContactInformation(ContactInformationType.Availability);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -182,7 +189,14 @@ namespace LuxaforLyncTool_Lync
         /// <returns></returns>
         public List<Conversation> GetCurrentConversations()
         {
-            return _lyncClient.ConversationManager.Conversations.ToList();
+            if (_lyncClient != null)
+            {
+                return _lyncClient.ConversationManager.Conversations.ToList();
+            }
+            else
+            {
+                return new List<Conversation>();
+            }
         }
     }
 }

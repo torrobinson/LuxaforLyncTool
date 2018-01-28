@@ -66,6 +66,7 @@ namespace LuxaforLyncTool_Client
 
             _notifyIcon.ContextMenuStrip.Items.Add(reconnectOption);
             _notifyIcon.ContextMenuStrip.Items.Add(exitOption);
+            _notifyIcon.Icon = Images.TrayIconError;
         }
 
         private void ShowConnectedOptions()
@@ -123,6 +124,8 @@ namespace LuxaforLyncTool_Client
             _notifyIcon.ContextMenuStrip.Items.Add(brightnessMenu);
             _notifyIcon.ContextMenuStrip.Items.Add(aboutItem);
             _notifyIcon.ContextMenuStrip.Items.Add(exitOption);
+
+            _notifyIcon.Icon = Images.TrayIcon;
 
             CheckCurrentBrightnessItem();
         }
