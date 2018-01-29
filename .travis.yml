@@ -7,6 +7,7 @@ install:
   - nuget restore LuxaforLyncTool/LuxaforLyncTool.sln
   # Install an xunit test runner
   #- nuget install xunit.runners -Version 2.2.0 -OutputDirectory testrunner
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
   
 script:
   # Individually build the .netstandard projects
@@ -20,4 +21,4 @@ script:
   - msbuild ".\LuxaforLyncTool\LuxaforLyncTool_Test\LuxaforLyncTool_Test.csproj" /t:Build /p:Configuration=Release
  
   # Run the unit tests
-  - dotnet test ./LuxaforLyncTool/LuxaforLyncTool_Test/LuxaforLyncTool_Test.csproj
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./LuxaforLyncTool/LuxaforLyncTool_Test/bin/Release/LuxaforLyncTool_Test.dll
