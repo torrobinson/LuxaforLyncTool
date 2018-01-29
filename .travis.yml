@@ -7,9 +7,9 @@ install:
   - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
 script:
   # Restore nuget packages
-  - cd LuxaforLyncTool
-  - dotnet restore
-  - cd ..
+  #- cd LuxaforLyncTool
+  #- dotnet restore
+  #- cd ..
   
   # Individually build the .netstandard projects
   - dotnet build ".\LuxaforLyncTool\LuxaforLyncTool_Light\LuxaforLyncTool_Light.csproj" -c Release
