@@ -1,3 +1,6 @@
+language: csharp
+dotnet: 2.0.0
+solution: LuxaforLyncTool/LuxaforLyncTool.sln
 jobs:
   include:
     - stage: Dependencies
