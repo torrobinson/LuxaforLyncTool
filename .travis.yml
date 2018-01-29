@@ -20,7 +20,6 @@ script:
   - msbuild ".\LuxaforLyncTool\LuxaforLyncTool_Test\LuxaforLyncTool_Test.csproj" /t:Build /p:Configuration=Release
   
   # Run the unit tests
-  - cd LuxaforLyncTool
   - mono "./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe" ./LuxaforLyncTool/LuxaforLyncTool_Test/bin/Release/LuxaforLyncTool_Test.dll
   
   #- ls
