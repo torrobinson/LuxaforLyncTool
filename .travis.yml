@@ -2,6 +2,7 @@ language: csharp
 dotnet: 2.0.0
 solution: LuxaforLyncTool/LuxaforLyncTool.sln
 install:
+  - nuget restore LuxaforLyncTool/LuxaforLyncTool.sln
   # Install an xunit test runner
   - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
 script:
