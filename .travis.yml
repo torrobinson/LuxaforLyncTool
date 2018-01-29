@@ -6,7 +6,6 @@ install:
   # Restore NuGet packages
   - nuget restore LuxaforLyncTool/LuxaforLyncTool.sln
   # Install an xunit test runner
-  #- nuget install xunit.runners -Version 2.2.0 -OutputDirectory testrunner
   - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
   
 script:
