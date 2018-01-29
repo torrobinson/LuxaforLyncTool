@@ -21,13 +21,3 @@ script:
  
   # Run the unit tests
   - mono ./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe ./LuxaforLyncTool/LuxaforLyncTool_Test/bin/Release/LuxaforLyncTool_Test.dll
-  
-  - ls
-  - cd testrunner
-  - ls
-  - cd xunit.runners.1.9.2
-  - ls
-  - cd tools
-  - ls
-  #- cd Release
-  #- ls
