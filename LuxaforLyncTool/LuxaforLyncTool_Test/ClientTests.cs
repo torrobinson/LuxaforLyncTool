@@ -1,12 +1,13 @@
 ﻿using System;
 using LuxaforLyncTool_Client;
-using Xunit;
+using NUnit.Framework;
 
 namespace LuxaforLyncTool_Test
 {
+    [TestFixture]
     public class ClientTests
     {
-        [Fact] 
+        [Test] 
         public void DefaultBrightness_IsValid()
         {
             Settings settings = new Settings();
